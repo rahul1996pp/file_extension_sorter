@@ -2,24 +2,39 @@ import os
 import shutil
 
 
-def move(file, folder):
-    print("[+] Moving {} to {}".format(file, folder))
-    shutil.move(file, folder)
-
-
-def file_folder():
-    credit()
-    files = os.listdir()
-    for i in files:
-        extension = i.split(".")[-1]
-        if (i == "file_mover.py") or (i == "file_mover.exe"):
+def folder_files_list(dirpath):
+    files = os.listdir(dirpath)
+    for file in files:
+        if file == 'file_extension_sorter.py':
             continue
-        try:
-            os.mkdir(extension)
-            move(i, extension)
-        except:
-            print("[~] {} already existed".format(extension))
-            move(i, extension)
+        name, extension = os.path.splitext(file)
+        extension = extension[1:]
+        if extension == '':
+            continue
+        folder_make(dirpath, file, extension)
+
+
+def folder_list():
+    folder = input("[+] Enter folder name or drag and drop :- ")
+    for (dirpath, dirnames, filenames) in os.walk(folder):
+        print("[+] processing the folder :- ", dirpath)
+        folder_files_list(dirpath)
+
+
+def file_move(dirpath, file, extension):
+    print("[+] moving file:-  {} to folder {}".format(file, extension))
+    shutil.move(dirpath + '/' + file, dirpath + '/' + extension + '/' + file)
+
+
+def folder_make(dirpath, file, extension):
+    try:
+        if os.path.exists(dirpath + '/' + extension):
+            file_move(dirpath, file, extension)
+        else:
+            os.mkdir(dirpath + '/' + extension)
+            file_move(dirpath, file, extension)
+    except:
+        print("[-] Folder make error occur")
 
 
 def credit():
@@ -40,7 +55,14 @@ def credit():
 
 """)
 
+
+credit()
 try:
-    file_folder()
+    menu = input("[*] Do you want to process folder press 'y' or "
+                 "'n' to process files in current directory :- ")
+    if menu == 'y':
+        folder_list()
+    elif menu == 'n':
+        folder_files_list(os.getcwd())
 except:
     print("[-] Exiting....")
