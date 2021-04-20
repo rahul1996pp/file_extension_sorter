@@ -1,13 +1,14 @@
-import os
-import shutil
+from os import listdir, mkdir, walk, getcwd
+from os.path import exists, splitext
+from shutil import move
 
 
 def folder_files_list(dirpath):
-    files = os.listdir(dirpath)
+    files = listdir(dirpath)
     for file in files:
         if file == 'file_extension_sorter.py':
             continue
-        name, extension = os.path.splitext(file)
+        name, extension = splitext(file)
         extension = extension[1:]
         if extension == '':
             continue
@@ -16,22 +17,22 @@ def folder_files_list(dirpath):
 
 def folder_list():
     folder = input("[+] Enter folder name or drag and drop :- ")
-    for (dirpath, dirnames, filenames) in os.walk(folder):
+    for (dirpath, dirnames, filenames) in walk(folder):
         print("[+] processing the folder :- ", dirpath)
         folder_files_list(dirpath)
 
 
 def file_move(dirpath, file, extension):
     print("[+] moving file:-  {} to folder {}".format(file, extension))
-    shutil.move(dirpath + '/' + file, dirpath + '/' + extension + '/' + file)
+    move(dirpath + '/' + file, dirpath + '/' + extension + '/' + file)
 
 
 def folder_make(dirpath, file, extension):
     try:
-        if os.path.exists(dirpath + '/' + extension):
+        if exists(dirpath + '/' + extension):
             file_move(dirpath, file, extension)
         else:
-            os.mkdir(dirpath + '/' + extension)
+            mkdir(dirpath + '/' + extension)
             file_move(dirpath, file, extension)
     except:
         print("[-] Folder make error occur")
@@ -63,6 +64,6 @@ try:
     if menu == 'y':
         folder_list()
     elif menu == 'n':
-        folder_files_list(os.getcwd())
+        folder_files_list(getcwd())
 except:
     print("[-] Exiting....")
